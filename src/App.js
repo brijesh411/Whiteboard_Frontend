@@ -1,8 +1,11 @@
+import Forms from './components/Forms/index.jsx'
+
 import './App.css'
+
 const App = () => {
   return(
-    <div className="App">
-      <h1>Home</h1>
+    <div className="container">
+      <Forms />
     </div>
   )
 }

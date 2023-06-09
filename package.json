@@ -30,7 +30,7 @@
     "production": [
       ">0.2%",
       "not dead",
-      "not op_mini all"
+      "not op_mini aroughjs__WEBPACK_IMPORTED_MODULE_1___default(...).generator is not a functionll"
     ],
     "development": [
       "last 1 chrome version",

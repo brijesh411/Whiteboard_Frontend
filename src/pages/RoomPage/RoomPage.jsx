@@ -83,11 +83,13 @@ const RoomPage = () => {
         </div>
         <div className="col-md-10 mx-auto mt-4 canvas-box">
             <Whiteboard 
-            canvasRef={canvasRef} 
-            ctxRef={ctxRef} 
-            elements={elements}
-            setElements={setElements}    
+                canvasRef={canvasRef} 
+                ctxRef={ctxRef} 
+                elements={elements}
+                setElements={setElements}    
+                tool={tool}
             />
+
         </div>
     </div>
   )

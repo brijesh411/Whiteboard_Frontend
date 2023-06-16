@@ -2,7 +2,7 @@ import { useEffect, useLayoutEffect, useState } from 'react'
 import rough from 'roughjs/bundled/rough.esm.js' 
 const roughGenerator = rough.generator();
 
-const Whiteboard = ({ canvasRef, ctxRef, elements, setElements, tool }) => {
+const Whiteboard = ({ canvasRef, ctxRef, elements, setElements, tool, color }) => {
 
   const [isDrawing, setIsDrawing] = useState(false)
 
@@ -15,15 +15,28 @@ const Whiteboard = ({ canvasRef, ctxRef, elements, setElements, tool }) => {
    
     const ctx = canvas.getContext("2d")
 
+    ctx.strokeStyle = color
+    ctx.lineWidth = 2
+    ctx.lineCap = 'round'
+
     ctxRef.current = ctx
 
   }, [])
+
+  useEffect(() => {
+    ctxRef.current.strokeStyle = color;
+  }, [color])
 
   useLayoutEffect(() => {
     const roughCanvas = rough.canvas(canvasRef.current);
 
     if(elements.length > 0){
-      ctxRef.current.clearRect(0,0,canvasRef.current.width, canvasRef.current.height)
+      ctxRef.current.clearRect(
+        0,
+        0,
+        canvasRef.current.width, 
+        canvasRef.current.height
+        )
     }
     elements.forEach((element) => {
       
@@ -33,7 +46,12 @@ const Whiteboard = ({ canvasRef, ctxRef, elements, setElements, tool }) => {
           element.offsetX,
           element.offsetY,
           element.width,
-          element.height
+          element.height,
+          {
+            stroke: element.stroke,
+            strokeWidth: 5,
+            roughness: 0
+          }
           )
         )
     }  
@@ -43,11 +61,20 @@ const Whiteboard = ({ canvasRef, ctxRef, elements, setElements, tool }) => {
           element.offsetX,
           element.offsetY,
           element.width,
-          element.height
+          element.height,
+          {
+            stroke: element.stroke,
+            strokeWidth: 5,
+            roughness: 0
+          }
           )
         )
       }else if(element.type === 'pencil'){
-        roughCanvas.linearPath(element.path);
+        roughCanvas.linearPath(element.path , {
+          stroke: element.stroke,
+          strokeWidth: 5,
+          roughness: 0
+        });
       }
     })
   },[elements])
@@ -63,7 +90,7 @@ const Whiteboard = ({ canvasRef, ctxRef, elements, setElements, tool }) => {
           offsetX,
           offsetY,
           path: [[offsetX, offsetY]],
-          stroke: "black",
+          stroke: color,
         },
       ]);
     }
@@ -77,7 +104,7 @@ const Whiteboard = ({ canvasRef, ctxRef, elements, setElements, tool }) => {
           offsetY,
           width: offsetX,
           height: offsetY,
-          stroke: "black",
+          stroke: color,
         }        
 
       ])
@@ -92,7 +119,7 @@ const Whiteboard = ({ canvasRef, ctxRef, elements, setElements, tool }) => {
           offsetY,
           width: 0,
           height: 0,
-          stroke: "black",
+          stroke: color,
         }        
 
       ])

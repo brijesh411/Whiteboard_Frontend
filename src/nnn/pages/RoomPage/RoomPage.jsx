@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 
-import "./RoomPage.css";
+import "./index.css";
 
 import WhiteBoard from "../../components/Whiteboard/Whiteboard";
 import Chat from "../../components/UserBar/UserBar";
@@ -14,6 +14,7 @@ const RoomPage = ({ user, socket, users }) => {
   const [elements, setElements] = useState([]);
   const [history, setHistory] = useState([]);
   const [openedUserTab, setOpenedUserTab] = useState(false);
+  const [openedChatTab, setOpenedChatTab] = useState(false);
 
   const handleClearCanvas = () => {
     const canvas = canvasRef.current;
@@ -24,31 +25,21 @@ const RoomPage = ({ user, socket, users }) => {
   };
 
   const undo = () => {
-    setHistory((prevHistory) => {
-      return [
-        ...prevHistory,
-        elements[elements.length - 1],
-      ];
-    });
-    setElements((prevElements) => {
-      const leftover = prevElements.slice(0, prevElements.length - 1);
-      if (leftover.length === 0) {
-        handleClearCanvas();
-        return [];
-      } else {
-        return leftover;
-      }
-    });
+    setHistory((prevHistory) => [
+      ...prevHistory,
+      elements[elements.length - 1],
+    ]);
+    setElements((prevElements) =>
+      prevElements.slice(0, prevElements.length - 1)
+    );
   };
-  
-const redo = ()=>{
-  setElements((prevElements)=>{
-      return [
-          ...prevElements,
-          history[history.length-1]
-      ]
-  })
-  setHistory((prevHistory)=> prevHistory.slice(0, prevHistory.length-1 ))
+
+  const redo = () => {
+    setElements((prevElements) => [
+      ...prevElements,
+      history[history.length - 1],
+    ]);
+    setHistory((prevHistory) => prevHistory.slice(0, prevHistory.length - 1));
   };
 
   return (
@@ -68,6 +59,21 @@ const redo = ()=>{
       >
         Users
       </button>
+      <button
+        type="button"
+        className="btn btn-primary"
+        style={{
+          display: "block",
+          position: "absolute",
+          top: "5%",
+          left: "10%",
+          height: "40px",
+          width: "100px",
+        }}
+        onClick={() => setOpenedChatTab(true)}
+      >
+        Chats
+      </button>
       {openedUserTab && (
         <div
           className="position-fixed top-0 h-100 text-white bg-dark"
@@ -82,15 +88,18 @@ const redo = ()=>{
           </button>
           <div className="w-100 mt-5 pt-5">
             {users.map((usr, index) => (
-              <p key={index * 999} className="my-2 text-center w-100">
+              <p key={index * 999} className="my-2 text-center w-100 ">
                 {usr.name} {user && user.userId === usr.userId && "(You)"}
               </p>
             ))}
           </div>
         </div>
       )}
+      {openedChatTab && (
+        <Chat setOpenedChatTab={setOpenedChatTab} socket={socket} />
+      )}
       <h1 className="text-center py-4">
-       Doodle Share{" "}
+        White Board Sharing App{" "}
         <span className="text-primary">[Users Online : {users.length}]</span>
       </h1>
       {user?.presenter && (
@@ -181,8 +190,6 @@ const redo = ()=>{
           socket={socket}
         />
       </div>
-
-      <Chat setOpenedChatTab={() => {}} socket={socket} />
     </div>
   );
 };

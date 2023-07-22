@@ -10,6 +10,8 @@ const CreateRoomForm = ({ uuid, socket, setUser }) => {
   const handleCreateRoom = (e) => {
     e.preventDefault();
 
+    // {name,roomId, userId, host, presenter}
+
     const roomData = {
       name,
       roomId,
@@ -51,12 +53,11 @@ const CreateRoomForm = ({ uuid, socket, setUser }) => {
             >
               generate
             </button>
-            <button onClick={() => 
-              navigator.clipboard.writeText(roomId)} 
-              className="btn btn-outline-danger btn-sm me-2" 
+            <button
+              className="btn btn-outline-danger btn-sm me-2"
               type="button"
-              >
-                copy
+            >
+              copy
             </button>
           </div>
         </div>

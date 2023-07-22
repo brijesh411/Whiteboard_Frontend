@@ -8,7 +8,7 @@ import "./App.css";
 import Forms from "./components/Forms/index";
 import RoomPage from "./pages/RoomPage/RoomPage";
 
-const server = "http://localhost:5000";
+const server = "https://white-board-backend.onrender.com";
 const connectionOptions = {
   "force new connection": true,
   reconnectionAttempts: "Infinity",

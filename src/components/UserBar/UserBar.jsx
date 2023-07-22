@@ -9,7 +9,7 @@ const Chat = ({socket})=>{
         socket.on("messageResponse", (data)=>{
             setChat((prevChats)=> [...prevChats, data]);
         })
-    },[])
+    },[socket])
 
     const handleSubmit = (e)=>{
         e.preventDefault();

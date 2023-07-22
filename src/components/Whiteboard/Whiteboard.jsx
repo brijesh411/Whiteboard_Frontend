@@ -1,5 +1,5 @@
-import { useEffect, useLayoutEffect, useState } from 'react'
-import rough from 'roughjs/bundled/rough.esm.js' 
+import { useEffect, useLayoutEffect, useState } from 'react';
+import rough from 'roughjs/bundled/rough.esm.js';
 const roughGenerator = rough.generator();
 
 const WhiteBoard = ({
@@ -13,30 +13,16 @@ const WhiteBoard = ({
   socket,
 }) => {
   const [img, setImg] = useState(null);
+  const [isDrawing, setIsDrawing] = useState(false);
 
   useEffect(() => {
     socket.on("whiteBoardDataResponse", (data) => {
       setImg(data.imgURL);
     });
-  }, []);
-
-  if (!user?.presenter) {
-    return (
-      <div className="border border-dark border-3 h-100 w-100 overflow-hidden">
-        <img
-          src={img}
-          alt="Real time white board image shared by presenter"
-          // className="w-100 h-100"
-          style={{
-            height: window.innerHeight * 2,
-            width: "285%",
-          }}
-        />
-      </div>
-    );
-  }
-
-  const [isDrawing, setIsDrawing] = useState(false);
+    return () => {
+      socket.off("whiteBoardDataResponse");
+    };
+  }, [socket]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -49,12 +35,13 @@ const WhiteBoard = ({
     ctx.lineCap = "round";
 
     ctxRef.current = ctx;
-  }, []);
+  }, [canvasRef, color, ctxRef]);
 
   useEffect(() => {
     ctxRef.current.strokeStyle = color;
-  }, [color]);
+  }, [color, ctxRef]);
 
+  // The useLayoutEffect is called unconditionally here
   useLayoutEffect(() => {
     if (canvasRef) {
       const roughCanvas = rough.canvas(canvasRef.current);
@@ -109,7 +96,24 @@ const WhiteBoard = ({
       const canvasImage = canvasRef.current.toDataURL();
       socket.emit("whiteboardData", canvasImage);
     }
-  }, [elements]);
+  }, [elements, canvasRef, ctxRef, socket]);
+
+    if (!user?.presenter) {
+    return (
+      <div className="border border-dark border-3 h-100 w-100 overflow-hidden">
+        <img
+          src={img}
+          alt="Board shared by presenter"
+          // className="w-100 h-100"
+          style={{
+            height: window.innerHeight * 2,
+            width: "285%",
+          }}
+        />
+      </div>
+    );
+  }
+
 
   const handleMouseDown = (e) => {
     const { offsetX, offsetY } = e.nativeEvent;
@@ -222,3 +226,5 @@ const WhiteBoard = ({
 };
 
 export default WhiteBoard;
+
+
